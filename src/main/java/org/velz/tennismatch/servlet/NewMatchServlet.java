@@ -15,6 +15,8 @@ import org.velz.tennismatch.service.NewMatchService;
 import org.velz.tennismatch.service.OngoingMatchesService;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @WebServlet("/new-match")
@@ -46,9 +48,38 @@ public class NewMatchServlet extends HttpServlet {
         MatchDto matchDto = newMatchService.createNewMatch(newMatchDto);
         Match match = matchMapper.mapFromDtoToMatch(matchDto);
         UUID uuid = ongoingMatchesService.add(match);
+        List<String> errors = validatePlayersNames(playerOne, playerTwo);
 
-        String redirectUrl = "/match-score" + "?uuid=" + uuid; //TODO: Refactor
-        resp.sendRedirect(redirectUrl);
 
+        req.setAttribute("errors", errors);
+        if (!errors.isEmpty()) {
+            req.getRequestDispatcher("new-match.jsp").forward(req, resp);
+        } else {
+            String redirectUrl = "/match-score" + "?uuid=" + uuid; //TODO: Refactor
+            resp.sendRedirect(redirectUrl);
+        }
+
+
+
+
+    }
+
+    private List<String> validatePlayersNames(String playerOne, String playerTwo) {
+        List<String> errors = new ArrayList<>();
+
+        if (playerOne.isEmpty() && playerTwo.isEmpty()) {
+            errors.add("Players names should be not empty");
+
+        }
+        if (!playerOne.matches("[а-яА-яёЁa-zA-Z ]+") || !playerTwo.matches("[а-яА-ЯёЁa-zA-Z ]+")) {
+            errors.add("Players names should be only letters");
+        }
+        if (playerOne.equalsIgnoreCase(playerTwo)) {
+            errors.add("Players names should be unique");
+        }
+        if (playerOne.length() > 20 || playerTwo.length() > 20) {
+            errors.add("Players names length should be <=20 letters");
+        }
+        return errors;
     }
 }

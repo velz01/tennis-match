@@ -9,6 +9,8 @@ INSERT INTO players (name) VALUES ('Кеи Нисикори');
 INSERT INTO players (name) VALUES ('Доминик Тим');
 INSERT INTO players (name) VALUES ('Александр Зверев');
 INSERT INTO players (name) VALUES ('Мартин Иден');
+INSERT INTO players (name) VALUES ('Лютый тип');
+INSERT INTO players (name) VALUES ('Нереально жесткий');
 
 INSERT INTO matches (player1, player2, winner) VALUES (1, 2, 2);
 INSERT INTO matches (player1, player2, winner) VALUES (3, 4, 3);
@@ -26,3 +28,5 @@ INSERT INTO matches (player1, player2, winner) VALUES (4, 6, 6);
 INSERT INTO matches (player1, player2, winner) VALUES (7, 9, 9);
 INSERT INTO matches (player1, player2, winner) VALUES (8, 10, 8);
 INSERT INTO matches (player1, player2, winner) VALUES (11, 1, 11);
+INSERT INTO matches (player1, player2, winner) VALUES (1, 12, 12);
+INSERT INTO matches (player1, player2, winner) VALUES (13, 1, 1);

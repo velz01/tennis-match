@@ -12,8 +12,6 @@ import org.velz.tennismatch.service.FinishedMatchesService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
 
 @WebServlet("/matches")
 public class FinishedMatchesServlet extends HttpServlet {
@@ -34,7 +32,7 @@ public class FinishedMatchesServlet extends HttpServlet {
 
         req.setAttribute("matches", finishedMatches);
         req.setAttribute("pageNumber", pageNumber);
-
+        req.setAttribute("filterName", playerName);
         System.out.println(finishedMatches.size());
         req.setAttribute("pageSize", PAGE_SIZE_BY_DEFAULT);
         req.getRequestDispatcher("matches.jsp").forward(req,resp);
