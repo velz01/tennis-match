@@ -4,6 +4,7 @@ import org.velz.tennismatch.dto.MatchDto;
 import org.velz.tennismatch.model.Match;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,7 +22,10 @@ public class OngoingMatchesService {
 
         return uuid;
     }
-    public Match get(UUID uuid) {
-        return onGoingMatches.get(uuid);
+    public Optional<Match> get(UUID uuid) {
+        return Optional.ofNullable(onGoingMatches.get(uuid));
+    }
+    public void delete(UUID uuid) {
+        onGoingMatches.remove(uuid);
     }
 }

@@ -1,24 +1,66 @@
 package org.velz.tennismatch.model;
 
-public class MatchScore {
-    private static final int INDEX_PLAYER1 = 0;
-    private static final int INDEX_PLAYER2 = 1;
+import lombok.Getter;
+import lombok.ToString;
+import org.velz.tennismatch.enums.EPlayer;
 
-    private final int[] score;
-    private final int[] games;
-    private final int[] sets;
+
+@Getter
+@ToString
+public class MatchScore {
+
+    private int[] games;
+    private int[] sets;
+
+    private final GameScore gameScore;
 
     public MatchScore() {
-        this.score = new int[]{0,0};
-        this.games = new int[]{0,0};
-        this.sets = new int[]{0,0};
+        this.gameScore = new GameScore();
+        this.games = new int[2];
+        this.sets = new int[2];
     }
 
-    public int getScorePlayer1() {
-        return score[INDEX_PLAYER1];
+    public void increaseScore(EPlayer player) {
+        gameScore.increasePoints(player);
+
+        if (gameScore.checkWinner()) { //gameisOver?
+            games[player.getIndexPlayer()]++;
+        }
+        if (setIsOver()) {  //increaseSetsifNeeds ?
+            sets[player.getIndexPlayer()]++;
+            resetGames();
+        }
+
     }
 
-    public int getScorePlayer2() {
-        return score[INDEX_PLAYER2];
+    private void resetGames() {
+        this.games = new int[2];
+    }
+
+    private boolean setIsOver() {
+        return getGamesPlayer1() == 6 || getGamesPlayer2() == 6;
+    }
+
+    public int getGamesPlayer1() {
+        return games[EPlayer.PLAYER1.getIndexPlayer()];
+    }
+    public int getGamesPlayer2() {
+        return games[EPlayer.PLAYER2.getIndexPlayer()];
+    }
+    public int getSetsPlayer1() {
+        return sets[EPlayer.PLAYER1.getIndexPlayer()];
+    }
+    public int getSetsPlayer2() {
+        return sets[EPlayer.PLAYER2.getIndexPlayer()];
+    }
+    public int getPointsPlayer1() {
+        return gameScore.getScorePlayer1().getPoints();
+    }
+    public int getPointsPlayer2() {
+        return gameScore.getScorePlayer2().getPoints();
+    }
+
+    public boolean matchIsFinished() {
+        return sets[EPlayer.PLAYER1.getIndexPlayer()] == 2 || sets[EPlayer.PLAYER2.getIndexPlayer()] == 2;
     }
 }

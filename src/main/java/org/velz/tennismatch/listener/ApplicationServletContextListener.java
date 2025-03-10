@@ -4,20 +4,24 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
+import lombok.SneakyThrows;
 import org.velz.tennismatch.dao.MatchDao;
 import org.velz.tennismatch.dao.PlayerDao;
 import org.velz.tennismatch.mapper.MatchDtoMapper;
 import org.velz.tennismatch.mapper.MatchMapper;
 import org.velz.tennismatch.mapper.NewMatchDtoMapper;
-import org.velz.tennismatch.service.FinishedMatchesPersistenceService;
+import org.velz.tennismatch.service.FinishedMatchesService;
 import org.velz.tennismatch.service.MatchScoreCalculationService;
 import org.velz.tennismatch.service.NewMatchService;
 import org.velz.tennismatch.service.OngoingMatchesService;
+import org.velz.tennismatch.util.HibernateUtil;
 
 @WebListener
 public class ApplicationServletContextListener implements ServletContextListener {
 
+    @SneakyThrows//временно, потом в catch пробрасывать runtime
     public void contextInitialized(ServletContextEvent event) {
+        HibernateUtil.initDatabase();
         ServletContext servletContext = event.getServletContext();
 
         MatchDao matchDao = new MatchDao();
@@ -29,7 +33,7 @@ public class ApplicationServletContextListener implements ServletContextListener
 
         servletContext.setAttribute("newMatchService", new NewMatchService(playerDao, matchDtoMapper));
         servletContext.setAttribute("matchScoreCalculationService", new MatchScoreCalculationService());
-        servletContext.setAttribute("finishedMatchesPersistenceService", new FinishedMatchesPersistenceService());
+        servletContext.setAttribute("finishedMatchesService", new FinishedMatchesService(matchDao));
         servletContext.setAttribute("ongoingMatchesService", new OngoingMatchesService());
         servletContext.setAttribute("newMatchDtoMapper", new NewMatchDtoMapper());
         servletContext.setAttribute("matchMapper", new MatchMapper());
