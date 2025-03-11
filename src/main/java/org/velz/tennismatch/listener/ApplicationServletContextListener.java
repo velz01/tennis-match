@@ -8,7 +8,6 @@ import lombok.SneakyThrows;
 import org.velz.tennismatch.dao.MatchDao;
 import org.velz.tennismatch.dao.PlayerDao;
 import org.velz.tennismatch.mapper.MatchDtoMapper;
-import org.velz.tennismatch.mapper.MatchMapper;
 import org.velz.tennismatch.mapper.NewMatchDtoMapper;
 import org.velz.tennismatch.service.FinishedMatchesService;
 import org.velz.tennismatch.service.MatchScoreCalculationService;
@@ -33,10 +32,10 @@ public class ApplicationServletContextListener implements ServletContextListener
 
         servletContext.setAttribute("newMatchService", new NewMatchService(playerDao, matchDtoMapper));
         servletContext.setAttribute("matchScoreCalculationService", new MatchScoreCalculationService());
-        servletContext.setAttribute("finishedMatchesService", new FinishedMatchesService(matchDao));
+        servletContext.setAttribute("finishedMatchesService", new FinishedMatchesService(matchDao, matchDtoMapper));
         servletContext.setAttribute("ongoingMatchesService", new OngoingMatchesService());
         servletContext.setAttribute("newMatchDtoMapper", new NewMatchDtoMapper());
-        servletContext.setAttribute("matchMapper", new MatchMapper());
+
 
 
 

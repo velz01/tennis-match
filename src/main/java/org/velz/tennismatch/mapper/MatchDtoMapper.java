@@ -22,4 +22,11 @@ public class MatchDtoMapper {
                 .matchScore(new MatchScore()) //???
                 .build();
     }
+    public Match mapFromDtoToMatch(MatchDto matchDto) {
+        return Match.builder()
+                .player1(matchDto.player1())
+                .player2(matchDto.player2())
+                .matchScore(matchDto.matchScore())
+                .build();
+    }
 }

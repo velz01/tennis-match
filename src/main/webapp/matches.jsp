@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-
+<%--    <link rel="stylesheet" href="css/style.css">--%>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <script src="js/app.js"></script>
 </head>
 
@@ -22,10 +22,12 @@
             </div>
             <span class="logo-text">TennisScoreboard</span>
         </div>
+
+
         <div>
             <nav class="nav-links">
-                <a class="nav-link" href="#">Home</a>
-                <a class="nav-link" href="#">Matches</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/index">Home</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/matches">Matches</a>
             </nav>
         </div>
     </section>
@@ -53,14 +55,19 @@
                 <th>Winner</th>
             </tr>
 
+
             <c:forEach var="match" items="${requestScope.matches}">
                 <tr>
-                    <th>${match.getPlayer1().getName()}</th>
-                    <th>${match.getPlayer2().getName()}</th>
-                    <th>${match.getWinner().getName()}</th>
+                    <th>${match.player1().getName()}</th>
+                    <th>${match.player2().getName()}</th>
+                    <th>${match.winner().getName()}</th>
                 </tr>
             </c:forEach>
 
+            <c:if test="${not empty requestScope.error}">
+                <p style="color: red;">${requestScope.error}</p>
+                <button value="First page"><a class="nav-link" href="${pageContext.request.contextPath}/matches">Matches</a></button>
+            </c:if>
 
         </table>
 

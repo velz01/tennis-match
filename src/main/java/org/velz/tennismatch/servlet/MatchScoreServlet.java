@@ -6,7 +6,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.velz.tennismatch.exception.MatchNotFoundException;
+import org.velz.tennismatch.dto.MatchDto;
+import org.velz.tennismatch.exception.BadRequestException;
+import org.velz.tennismatch.exception.ResourceNotFoundException;
+import org.velz.tennismatch.mapper.MatchDtoMapper;
 import org.velz.tennismatch.model.Match;
 import org.velz.tennismatch.service.FinishedMatchesService;
 import org.velz.tennismatch.service.MatchScoreCalculationService;
@@ -17,29 +20,35 @@ import java.util.Optional;
 import java.util.UUID;
 
 @WebServlet("/match-score")
-public class MatchScoreServlet extends HttpServlet {
+public class MatchScoreServlet extends BaseServlet {
     private OngoingMatchesService ongoingMatchesService;
     private MatchScoreCalculationService matchScoreCalculationService;
     private FinishedMatchesService finishedMatchesService;
+    private MatchDtoMapper matchDtoMapper;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         this.ongoingMatchesService = (OngoingMatchesService) config.getServletContext().getAttribute("ongoingMatchesService");
         this.matchScoreCalculationService = (MatchScoreCalculationService) config.getServletContext().getAttribute("matchScoreCalculationService");
         this.finishedMatchesService = (FinishedMatchesService) config.getServletContext().getAttribute("finishedMatchesService");
+        this.matchDtoMapper = (MatchDtoMapper) config.getServletContext().getAttribute("matchDtoMapper");
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         UUID uuid = UUID.fromString(req.getParameter("uuid"));
 
+        if (uuid.toString().isEmpty()) {
+            throw new BadRequestException("uuid is empty");
+        }
+
         Match match = getMatch(uuid);
 
         if (match.getWinner() != null) {
             ongoingMatchesService.delete(uuid);
         }
-        //TODO: при обновлении страницы уже удаленого матча сделать редирект на /matches (возможно подписать что матч уже был удален и необходимо выйти или редирект)
-        //в catch написать что такого матча не существует возможно он был уже удален и предложить редирект
+
+
         req.setAttribute("player1", match.getPlayer1().getName());
         req.setAttribute("player2", match.getPlayer2().getName());
         req.setAttribute("winner", match.getWinner());
@@ -53,13 +62,12 @@ public class MatchScoreServlet extends HttpServlet {
         UUID uuid = UUID.fromString(req.getParameter("uuid"));
         String player = req.getParameter("player");
 
-
         Match match = getMatch(uuid);
         matchScoreCalculationService.updateScore(match, player);
 
         if (match.getWinner() != null) {
-
-            finishedMatchesService.persist(match);
+            MatchDto matchDto = matchDtoMapper.mapFromMatchToDto(match);
+             finishedMatchesService.persist(matchDto);
         }
 
         resp.sendRedirect("/match-score" + "?uuid=" + uuid);
@@ -68,7 +76,8 @@ public class MatchScoreServlet extends HttpServlet {
     private Match getMatch(UUID uuid) {
         Optional<Match> matchOptional = ongoingMatchesService.get(uuid);
         if (matchOptional.isEmpty()) {
-            throw new MatchNotFoundException();
+            throw new ResourceNotFoundException("Match is not found");
+
         }
         return matchOptional.get();
     }
