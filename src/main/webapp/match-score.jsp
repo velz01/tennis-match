@@ -53,7 +53,12 @@
                     <td class="table-text">${requestScope.player1}</td>
                     <td class="table-text">${requestScope.matchScore.getSetsPlayer1()}</td>
                     <td class="table-text">${requestScope.matchScore.getGamesPlayer1()}</td>
-                    <td class="table-text">${requestScope.matchScore.getPointsPlayer1()}</td>
+                    <c:if test="${requestScope.matchScore.isTieBreak() == false}">
+                        <td class="table-text">${requestScope.matchScore.getPointsPlayer1()}</td>
+                    </c:if>
+                    <c:if test="${requestScope.matchScore.isTieBreak() == true}">
+                        <td class="table-text">${requestScope.matchScore.getTieBreakPointsPlayer1()}</td>
+                    </c:if>
                     <c:if test="${empty requestScope.winner}">
                         <td class="table-text">
                             <form action="${pageContext.request.contextPath}/match-score" method="post">
@@ -68,7 +73,12 @@
                     <td class="table-text">${requestScope.player2}</td>
                     <td class="table-text">${requestScope.matchScore.getSetsPlayer2()}</td>
                     <td class="table-text">${requestScope.matchScore.getGamesPlayer2()}</td>
-                    <td class="table-text">${requestScope.matchScore.getPointsPlayer2()}</td>
+                    <c:if test="${requestScope.matchScore.isTieBreak() == false}">
+                        <td class="table-text">${requestScope.matchScore.getPointsPlayer2()}</td>
+                    </c:if>
+                    <c:if test="${requestScope.matchScore.isTieBreak() == true}">
+                        <td class="table-text">${requestScope.matchScore.getTieBreakPointsPlayer2()}</td>
+                    </c:if>
 
                     <c:if test="${empty requestScope.winner}">
                         <td class="table-text">
@@ -82,6 +92,9 @@
 
 
                 </tr>
+                <c:if test="${requestScope.matchScore.isTieBreak() == true}">
+                    <td class="table-text">TieBreak</td>
+                </c:if>
                 <c:if test="${not empty requestScope.winner}">
                     Победитель матча: ${requestScope.winner.getName()}
                 </c:if>

@@ -12,33 +12,52 @@ public class MatchScore {
     private int[] games;
     private int[] sets;
 
+    private boolean isTieBreak;
     private final GameScore gameScore;
 
     public MatchScore() {
         this.gameScore = new GameScore();
         this.games = new int[2];
         this.sets = new int[2];
+        this.isTieBreak = false;
     }
 
     public void increaseScore(EPlayer player) {
-        gameScore.increasePoints(player);
+
+        if (isTieBreak) {
+            gameScore.increaseTieBreakPoints(player);
+        } else {
+            gameScore.increasePoints(player);
+        }
 
         if (gameScore.checkWinner()) { //gameisOver?
             games[player.getIndexPlayer()]++;
         }
+
+        if (checkTieBreak()) {
+            this.isTieBreak = true;
+        }
+
         if (setIsOver()) {  //increaseSetsifNeeds ?
             sets[player.getIndexPlayer()]++;
             resetGames();
         }
+    }
 
+
+
+    private boolean checkTieBreak() {
+        return getGamesPlayer1() == 6 && getGamesPlayer2() == 6;
     }
 
     private void resetGames() {
         this.games = new int[2];
+        this.isTieBreak = false;
     }
 
     private boolean setIsOver() {
-        return getGamesPlayer1() == 6 || getGamesPlayer2() == 6;
+        return ((Math.abs(getGamesPlayer1() - getGamesPlayer2()) >= 2) && (getGamesPlayer1() == 6 || getGamesPlayer2() == 6))
+                || (getGamesPlayer1() == 7 || getGamesPlayer2() == 7);
     }
 
     public int getGamesPlayer1() {
@@ -58,6 +77,12 @@ public class MatchScore {
     }
     public int getPointsPlayer2() {
         return gameScore.getScorePlayer2().getPoints();
+    }
+    public int getTieBreakPointsPlayer1() {
+        return gameScore.getPlayer1TieBreakPoints();
+    }
+    public int getTieBreakPointsPlayer2() {
+        return gameScore.getPlayer2TieBreakPoints();
     }
 
     public boolean matchIsFinished() {

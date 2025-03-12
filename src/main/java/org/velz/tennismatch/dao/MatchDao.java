@@ -22,7 +22,7 @@ public class MatchDao {
             session.persist(match);
             session.getTransaction().commit();
         } catch (HibernateException exception) {
-            throw new DatabaseException("Error with database");
+            throw new DatabaseException("Database error");
         }
     }
 
@@ -37,7 +37,7 @@ public class MatchDao {
             session.getTransaction().commit();
             return matches;
         } catch (HibernateException exception) {
-            throw new DatabaseException("Error with database");
+            throw new DatabaseException("Database error");
         }
 
     }
@@ -54,7 +54,7 @@ public class MatchDao {
             session.getTransaction().commit();
             return matches;
         } catch (HibernateException exception) {
-            throw new DatabaseException("Error with database");
+            throw new DatabaseException("Database error");
         }
     }
 }

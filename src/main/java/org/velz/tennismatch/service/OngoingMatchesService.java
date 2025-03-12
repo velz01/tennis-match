@@ -22,9 +22,11 @@ public class OngoingMatchesService {
 
         return uuid;
     }
+
     public Optional<Match> get(UUID uuid) {
         return Optional.ofNullable(onGoingMatches.get(uuid));
     }
+
     public void delete(UUID uuid) {
         onGoingMatches.remove(uuid);
     }

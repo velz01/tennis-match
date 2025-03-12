@@ -1,7 +1,9 @@
 package org.velz.tennismatch.dao;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.velz.tennismatch.exception.DatabaseException;
 import org.velz.tennismatch.model.Match;
 import org.velz.tennismatch.model.Player;
 import org.velz.tennismatch.util.HibernateUtil;
@@ -19,9 +21,11 @@ public class PlayerDao {
         String hql = "From Player where name = :playerName";
         try (Session session = sessionFactory.getCurrentSession()) {
             session.beginTransaction();
-            Optional<Player> player = session.createQuery(hql, Player.class ).setParameter("playerName", playerName).uniqueResultOptional();
+            Optional<Player> player = session.createQuery(hql, Player.class).setParameter("playerName", playerName).uniqueResultOptional();
             session.getTransaction().commit();
             return player;
+        } catch (HibernateException exception) {
+            throw new DatabaseException("Database error");
         }
     }
 
@@ -31,6 +35,8 @@ public class PlayerDao {
             session.persist(player);
             session.getTransaction().commit();
             return Optional.ofNullable(player);
+        } catch (HibernateException exception) {
+            throw new DatabaseException("Database error");
         }
     }
 }

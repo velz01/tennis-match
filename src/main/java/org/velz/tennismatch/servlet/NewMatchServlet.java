@@ -6,9 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.velz.tennismatch.dto.MatchDto;
-import org.velz.tennismatch.dto.NewMatchDto;
 import org.velz.tennismatch.mapper.MatchDtoMapper;
-import org.velz.tennismatch.mapper.NewMatchDtoMapper;
 import org.velz.tennismatch.model.Match;
 import org.velz.tennismatch.service.NewMatchService;
 import org.velz.tennismatch.service.OngoingMatchesService;
@@ -21,14 +19,12 @@ import java.util.UUID;
 @WebServlet("/new-match")
 public class NewMatchServlet extends BaseServlet {
     private NewMatchService newMatchService;
-    private NewMatchDtoMapper newMatchDtoMapper;
     private OngoingMatchesService ongoingMatchesService;
     private MatchDtoMapper matchDtoMapper;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         this.newMatchService = (NewMatchService) config.getServletContext().getAttribute("newMatchService");
-        this.newMatchDtoMapper = (NewMatchDtoMapper) config.getServletContext().getAttribute("newMatchDtoMapper");
         this.ongoingMatchesService = (OngoingMatchesService) config.getServletContext().getAttribute("ongoingMatchesService");
         this.matchDtoMapper = (MatchDtoMapper) config.getServletContext().getAttribute("matchDtoMapper");
     }
@@ -42,9 +38,9 @@ public class NewMatchServlet extends BaseServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String playerOne = req.getParameter("playerOne");
         String playerTwo = req.getParameter("playerTwo");
-        //TODO: Validation for players
-        NewMatchDto newMatchDto = newMatchDtoMapper.mapFromPlayersNamesToDto(playerOne, playerTwo);
-        MatchDto matchDto = newMatchService.createNewMatch(newMatchDto);
+
+
+        MatchDto matchDto = newMatchService.createNewMatch(playerOne, playerTwo);
         Match match = matchDtoMapper.mapFromDtoToMatch(matchDto);
         UUID uuid = ongoingMatchesService.add(match);
         List<String> errors = validatePlayersNames(playerOne, playerTwo);

@@ -1,24 +1,33 @@
 package org.velz.tennismatch.model;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.velz.tennismatch.enums.EPlayer;
 import org.velz.tennismatch.enums.Points;
 
 import java.util.Objects;
+
 @ToString
+@Getter
 public class GameScore {
     private static final int INDEX_PLAYER1 = 0;
     private static final int INDEX_PLAYER2 = 1;
     private static final String FIRST_PLAYER = "player1";
     private static final String SECOND_PLAYER = "player2";
 
+    @Setter
+    private int player1TieBreakPoints;
+    @Setter
+    private int player2TieBreakPoints;
+
+
     private Points[] score;
-    @Getter
+
     private boolean isTie;
-    @Getter
+
     private boolean isAdvantagePlayer1;
-    @Getter
+
     private boolean isAdvantagePlayer2;
 
     private String winner;
@@ -28,16 +37,15 @@ public class GameScore {
     }
 
 
-
     public void increasePoints(EPlayer player) {
         if (isTie) {
             handleTie(player);
         }
 
         if (player == EPlayer.PLAYER1) {
-            if (getScorePlayer1() != Points.FORTY ) {
+            if (getScorePlayer1() != Points.FORTY) {
                 score[INDEX_PLAYER1] = score[INDEX_PLAYER1].next();
-            } else if ( !isTie) {
+            } else if (!isTie) {
                 winner = FIRST_PLAYER;
             }
         }
@@ -45,7 +53,7 @@ public class GameScore {
         if (player == EPlayer.PLAYER2) {
             if (getScorePlayer2() != Points.FORTY) {
                 score[INDEX_PLAYER2] = score[INDEX_PLAYER2].next();
-            } else if ( !isTie){
+            } else if (!isTie) {
                 winner = SECOND_PLAYER;
             }
         }
@@ -63,8 +71,7 @@ public class GameScore {
                 isAdvantagePlayer2 = false;
             } else if (isAdvantagePlayer1) {
                 winner = FIRST_PLAYER;
-            }
-            else {
+            } else {
                 isAdvantagePlayer1 = true;
             }
 
@@ -74,8 +81,7 @@ public class GameScore {
                 isAdvantagePlayer1 = false;
             } else if (isAdvantagePlayer2) {
                 winner = SECOND_PLAYER;
-            }
-            else {
+            } else {
                 isAdvantagePlayer2 = true;
             }
         }
@@ -112,6 +118,8 @@ public class GameScore {
     }
 
     private void resetGame() {
+        this.player1TieBreakPoints = 0;
+        this.player2TieBreakPoints = 0;
         this.winner = "";
         this.isAdvantagePlayer1 = false;
         this.isAdvantagePlayer2 = false;
@@ -123,5 +131,19 @@ public class GameScore {
         return !winner.isEmpty();
     }
 
+    public void increaseTieBreakPoints(EPlayer player) {
+        if (player == EPlayer.PLAYER1) {
+            player1TieBreakPoints++;
+        }
+
+        if (player == EPlayer.PLAYER2) {
+            player2TieBreakPoints++;
+        }
+
+        if ((player1TieBreakPoints >= 7 || player2TieBreakPoints >= 7)
+                && Math.abs(player1TieBreakPoints - player2TieBreakPoints) >= 2) {
+            winner = player.toString();
+        }
+    }
 }
 
