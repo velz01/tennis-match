@@ -1,6 +1,5 @@
 package org.velz.tennismatch;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ public class GameScoreTest {
     public void winPointWhenTie() {
         makeTie();
 
-        gameScore.increasePoints(EPlayer.PLAYER1);
+        gameScore.updatePoints(EPlayer.PLAYER1);
 
         assertFalse(gameScore.winnerExists());
     }
@@ -35,27 +34,27 @@ public class GameScoreTest {
     public void winPointsWhenTie() {
         makeTie();
 
-        gameScore.increasePoints(EPlayer.PLAYER2);
-        gameScore.increasePoints(EPlayer.PLAYER2);
+        gameScore.updatePoints(EPlayer.PLAYER2);
+        gameScore.updatePoints(EPlayer.PLAYER2);
 
         assertTrue(gameScore.winnerExists());
     }
 
     private void makeTie() {
-        Points[] score = gameScore.getScore();
+        Points[] score = gameScore.getPoints();
         score[EPlayer.PLAYER1.getIndexPlayer()] = Points.THIRTY;
         score[EPlayer.PLAYER2.getIndexPlayer()] = Points.THIRTY;
-        gameScore.increasePoints(EPlayer.PLAYER1);
-        gameScore.increasePoints(EPlayer.PLAYER2);
+        gameScore.updatePoints(EPlayer.PLAYER1);
+        gameScore.updatePoints(EPlayer.PLAYER2);
     }
 
     @Test
     @DisplayName("game is finished when player1 win points when score is 40-0")
-    public void increaseScoreWhenScoreIsForty() {
-        Points[] score = gameScore.getScore();
+    public void increaseScoreWhenPointsIsForty() {
+        Points[] score = gameScore.getPoints();
         score[EPlayer.PLAYER1.getIndexPlayer()] = Points.FORTY;
 
-        gameScore.increasePoints(EPlayer.PLAYER1);
+        gameScore.updatePoints(EPlayer.PLAYER1);
 
         assertTrue(gameScore.winnerExists());
     }

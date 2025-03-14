@@ -24,20 +24,15 @@ public class ApplicationServletContextListener implements ServletContextListener
 
         MatchDao matchDao = new MatchDao();
         PlayerDao playerDao = new PlayerDao();
+        MatchDtoMapper matchDtoMapper = new MatchDtoMapper();
+
         servletContext.setAttribute("matchDao", matchDao);
         servletContext.setAttribute("playerDao", playerDao);
-        MatchDtoMapper matchDtoMapper = new MatchDtoMapper();
         servletContext.setAttribute("matchDtoMapper", matchDtoMapper);
-
         servletContext.setAttribute("newMatchService", new NewMatchService(playerDao, matchDtoMapper));
         servletContext.setAttribute("matchScoreCalculationService", new MatchScoreCalculationService());
         servletContext.setAttribute("finishedMatchesService", new FinishedMatchesService(matchDao, matchDtoMapper));
         servletContext.setAttribute("ongoingMatchesService", new OngoingMatchesService());
-
-
-
-
-
     }
 
 }

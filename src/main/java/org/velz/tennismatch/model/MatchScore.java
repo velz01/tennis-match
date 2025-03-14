@@ -22,28 +22,35 @@ public class MatchScore {
         this.isTieBreak = false;
     }
 
-    public void increaseScore(EPlayer player) {
+    public void updateScore(EPlayer player) {
 
         if (isTieBreak) {
-            gameScore.increaseTieBreakPoints(player);
+            gameScore.updateTieBreakPoints(player);
         } else {
-            gameScore.increasePoints(player);
+            gameScore.updatePoints(player);
         }
 
-        if (gameScore.checkWinner()) { //gameisOver?
-            games[player.getIndexPlayer()]++;
+        if (gameScore.checkWinner()) {
+            incrementGames(player);
         }
 
         if (checkTieBreak()) {
             this.isTieBreak = true;
         }
 
-        if (setIsOver()) {  //increaseSetsifNeeds ?
-            sets[player.getIndexPlayer()]++;
-            resetGames();
+        if (isSetOver()) {
+            completeSet(player);
         }
     }
 
+    private void incrementGames(EPlayer player) {
+        games[player.getIndexPlayer()]++;
+    }
+
+    private void completeSet(EPlayer player) {
+        sets[player.getIndexPlayer()]++;
+        resetGames();
+    }
 
 
     private boolean checkTieBreak() {
@@ -55,7 +62,7 @@ public class MatchScore {
         this.isTieBreak = false;
     }
 
-    private boolean setIsOver() {
+    private boolean isSetOver() {
         return ((Math.abs(getGamesPlayer1() - getGamesPlayer2()) >= 2) && (getGamesPlayer1() == 6 || getGamesPlayer2() == 6))
                 || (getGamesPlayer1() == 7 || getGamesPlayer2() == 7);
     }

@@ -48,10 +48,7 @@ public class MatchScoreServlet extends BaseServlet {
             ongoingMatchesService.delete(uuid);
         }
 
-
-        req.setAttribute("player1", match.getPlayer1().getName());
-        req.setAttribute("player2", match.getPlayer2().getName());
-        req.setAttribute("winner", match.getWinner());
+        req.setAttribute("match", match);
         req.setAttribute("uuid", uuid);
         req.setAttribute("matchScore", match.getMatchScore());
         req.getRequestDispatcher("match-score.jsp").forward(req, resp);

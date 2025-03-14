@@ -8,9 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
-<%--    <link rel="stylesheet" href="css/style.css">--%>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <script src="js/app.js"></script>
+    <style><%@ include file="/css/style.css"%></style>
+    <style><%@ include file="/js/app.js"%></style>
 </head>
 
 <body>
@@ -38,7 +37,6 @@
         <div class="input-container">
             <form action="${pageContext.request.contextPath}/matches">
                 <input class="input-filter" placeholder="Filter by name" name="filter_by_player_name" type="text" />
-                <button type="submit">Найти</button>
             </form>
 
             <div>

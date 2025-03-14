@@ -6,15 +6,11 @@ import lombok.ToString;
 import org.velz.tennismatch.enums.EPlayer;
 import org.velz.tennismatch.enums.Points;
 
-import java.util.Objects;
-
 @ToString
 @Getter
 public class GameScore {
-    private static final int INDEX_PLAYER1 = 0;
-    private static final int INDEX_PLAYER2 = 1;
-    private static final String FIRST_PLAYER = "player1";
-    private static final String SECOND_PLAYER = "player2";
+    public static final int MIN_TIEBREAK_POINTS = 7;
+    public static final int MIN_LEAD = 2;
 
     @Setter
     private int player1TieBreakPoints;
@@ -22,91 +18,86 @@ public class GameScore {
     private int player2TieBreakPoints;
 
 
-    private Points[] score;
+    private Points[] points;
 
-    private boolean isTie;
+    private boolean isDeuce;
 
-    private boolean isAdvantagePlayer1;
+    private EPlayer advantagePlayer;
 
-    private boolean isAdvantagePlayer2;
 
-    private String winner;
+
+    private EPlayer winner;
 
     public GameScore() {
         resetGame();
     }
 
 
-    public void increasePoints(EPlayer player) {
-        if (isTie) {
-            handleTie(player);
+    public void updatePoints(EPlayer player) {
+
+        if (isDeuce) {
+            handleDeuce(player);
+        } else {
+            processPoints(player);
         }
 
-        if (player == EPlayer.PLAYER1) {
-            if (getScorePlayer1() != Points.FORTY) {
-                score[INDEX_PLAYER1] = score[INDEX_PLAYER1].next();
-            } else if (!isTie) {
-                winner = FIRST_PLAYER;
-            }
+
+
+    }
+
+    private void processPoints(EPlayer player) {
+        if (getScorePlayer(player) != Points.FORTY) {
+            increasePoints(player);
+        } else if (!isDeuce) {
+            declareWinner(player);
         }
 
-        if (player == EPlayer.PLAYER2) {
-            if (getScorePlayer2() != Points.FORTY) {
-                score[INDEX_PLAYER2] = score[INDEX_PLAYER2].next();
-            } else if (!isTie) {
-                winner = SECOND_PLAYER;
-            }
-        }
 
-        if (checkTie()) {
-            isTie = true;
+    }
 
+    private void handleDeuce(EPlayer currentPlayer) {
+
+        if (advantagePlayer == null) {
+            advantagePlayer = currentPlayer;
+        } else if (advantagePlayer == currentPlayer) {
+            declareWinner(currentPlayer);
+            advantagePlayer = null;
+        } else {
+            advantagePlayer = null;
         }
 
     }
 
-    private void handleTie(EPlayer player) {
-        if (player == EPlayer.PLAYER1) {
-            if (isAdvantagePlayer2) { //TODO: Вынести в отдельный метод
-                isAdvantagePlayer2 = false;
-            } else if (isAdvantagePlayer1) {
-                winner = FIRST_PLAYER;
-            } else {
-                isAdvantagePlayer1 = true;
-            }
+    private void increasePoints(EPlayer player) {
+        int indexPlayer = player.getIndexPlayer();
+        points[indexPlayer] = points[indexPlayer].next();
 
+        if (checkDeuce()) {
+            isDeuce = true;
         }
-        if (player == EPlayer.PLAYER2) {
-            if (isAdvantagePlayer1) {
-                isAdvantagePlayer1 = false;
-            } else if (isAdvantagePlayer2) {
-                winner = SECOND_PLAYER;
-            } else {
-                isAdvantagePlayer2 = true;
-            }
-        }
-
-//        if (isAdvantagePlayer1) {
-//            winner = FIRST_PLAYER;
-//        }
-//
-//        if (isAdvantagePlayer2) {
-//            winner = SECOND_PLAYER;
-//        }
     }
 
 
-    private boolean checkTie() {
+
+    private void declareWinner(EPlayer player) {
+        winner = player;
+    }
+
+    private boolean checkDeuce() {
         return getScorePlayer1() == Points.FORTY && getScorePlayer2() == Points.FORTY;
     }
 
 
-    public Points getScorePlayer1() {
-        return score[INDEX_PLAYER1];
+    public Points getScorePlayer(EPlayer player) {
+        return points[player.getIndexPlayer()];
     }
 
     public Points getScorePlayer2() {
-        return score[INDEX_PLAYER2];
+        return points[EPlayer.PLAYER2.getIndexPlayer()];
+    }
+
+    public Points getScorePlayer1() {
+        return points[EPlayer.PLAYER1.getIndexPlayer()];
     }
 
     public boolean checkWinner() {
@@ -120,18 +111,16 @@ public class GameScore {
     private void resetGame() {
         this.player1TieBreakPoints = 0;
         this.player2TieBreakPoints = 0;
-        this.winner = "";
-        this.isAdvantagePlayer1 = false;
-        this.isAdvantagePlayer2 = false;
-        this.isTie = false;
-        this.score = new Points[]{Points.ZERO, Points.ZERO};
+        this.winner = null;
+        this.isDeuce = false;
+        this.points = new Points[]{Points.ZERO, Points.ZERO};
     }
 
     public boolean winnerExists() {
-        return !winner.isEmpty();
+        return winner != null;
     }
 
-    public void increaseTieBreakPoints(EPlayer player) {
+    public void updateTieBreakPoints(EPlayer player) {
         if (player == EPlayer.PLAYER1) {
             player1TieBreakPoints++;
         }
@@ -140,9 +129,9 @@ public class GameScore {
             player2TieBreakPoints++;
         }
 
-        if ((player1TieBreakPoints >= 7 || player2TieBreakPoints >= 7)
-                && Math.abs(player1TieBreakPoints - player2TieBreakPoints) >= 2) {
-            winner = player.toString();
+        if ((player1TieBreakPoints >= MIN_TIEBREAK_POINTS || player2TieBreakPoints >= MIN_TIEBREAK_POINTS)
+                && Math.abs(player1TieBreakPoints - player2TieBreakPoints) >= MIN_LEAD) {
+            declareWinner(player);
         }
     }
 }

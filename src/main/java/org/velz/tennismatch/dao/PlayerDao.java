@@ -29,12 +29,12 @@ public class PlayerDao {
         }
     }
 
-    public Optional<Player> save(Player player) {
+    public void save(Player player) {
         try (Session session = sessionFactory.getCurrentSession()) {
             session.beginTransaction();
             session.persist(player);
             session.getTransaction().commit();
-            return Optional.ofNullable(player);
+
         } catch (HibernateException exception) {
             throw new DatabaseException("Database error");
         }

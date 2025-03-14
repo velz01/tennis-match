@@ -26,6 +26,7 @@ public class MatchDtoMapper {
         return Match.builder()
                 .player1(matchDto.player1())
                 .player2(matchDto.player2())
+                .winner(matchDto.winner())
                 .matchScore(matchDto.matchScore())
                 .build();
     }

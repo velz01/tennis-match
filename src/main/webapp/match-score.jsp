@@ -13,9 +13,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap" rel="stylesheet">
-    <%--    <link rel="stylesheet" href="css/style.css">--%>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <script src="js/app.js"></script>
+    <style><%@ include file="/css/style.css"%></style>
+
+    <style><%@ include file="/js/app.js"%></style>
 </head>
 <body>
 <header class="header">
@@ -50,7 +50,7 @@
                 </thead>
                 <tbody>
                 <tr class="player1">
-                    <td class="table-text">${requestScope.player1}</td>
+                    <td class="table-text">${requestScope.match.getPlayer1().getName()}</td>
                     <td class="table-text">${requestScope.matchScore.getSetsPlayer1()}</td>
                     <td class="table-text">${requestScope.matchScore.getGamesPlayer1()}</td>
                     <c:if test="${requestScope.matchScore.isTieBreak() == false}">
@@ -59,7 +59,7 @@
                     <c:if test="${requestScope.matchScore.isTieBreak() == true}">
                         <td class="table-text">${requestScope.matchScore.getTieBreakPointsPlayer1()}</td>
                     </c:if>
-                    <c:if test="${empty requestScope.winner}">
+                    <c:if test="${empty requestScope.match.getWinner()}">
                         <td class="table-text">
                             <form action="${pageContext.request.contextPath}/match-score" method="post">
                                 <input type="hidden" name="player" value="player1">
@@ -70,7 +70,7 @@
                     </c:if>
                 </tr>
                 <tr class="player2">
-                    <td class="table-text">${requestScope.player2}</td>
+                    <td class="table-text">${requestScope.match.getPlayer2().getName()}</td>
                     <td class="table-text">${requestScope.matchScore.getSetsPlayer2()}</td>
                     <td class="table-text">${requestScope.matchScore.getGamesPlayer2()}</td>
                     <c:if test="${requestScope.matchScore.isTieBreak() == false}">
@@ -80,7 +80,7 @@
                         <td class="table-text">${requestScope.matchScore.getTieBreakPointsPlayer2()}</td>
                     </c:if>
 
-                    <c:if test="${empty requestScope.winner}">
+                    <c:if test="${empty requestScope.match.getWinner()}">
                         <td class="table-text">
                             <form action="${pageContext.request.contextPath}/match-score" method="post">
                                 <input type="hidden" name="player" value="player2">
@@ -93,20 +93,24 @@
 
                 </tr>
                 <c:if test="${requestScope.matchScore.isTieBreak() == true}">
-                    <td class="table-text">TieBreak</td>
+                    <h2>TieBreak</h2>
                 </c:if>
-                <c:if test="${not empty requestScope.winner}">
-                    Победитель матча: ${requestScope.winner.getName()}
+                <c:if test="${not empty requestScope.match.getWinner()}">
+                    <h1>Match is finished!</h1>
+                    <h2>Winner of match: ${requestScope.match.getWinner().getName()}</h2>
                 </c:if>
-                <c:if test="${empty requestScope.winner}">
-                    <c:if test="${requestScope.matchScore.getGameScore().isTie()}">
-                        <h3>Tie</h3>
+
+                <c:if test="${empty requestScope.match.getWinner()}">
+                    <c:if test="${requestScope.matchScore.getGameScore().isDeuce()}">
+                        <h1>Deuce</h1>
                     </c:if>
-                    <c:if test="${requestScope.matchScore.getGameScore().isAdvantagePlayer1()}">
-                        <h5>Преимущество за ${requestScope.player1}</h5>
+
+                    <c:if test="${requestScope.matchScore.getGameScore().getAdvantagePlayer().toString() == 'PLAYER1'}">
+                        <h2>${requestScope.match.getPlayer1().getName()} have advantage</h2>
                     </c:if>
-                    <c:if test="${requestScope.matchScore.getGameScore().isAdvantagePlayer2()}">
-                        <h5>Преимущество за ${requestScope.player2}</h5>
+
+                    <c:if test="${requestScope.matchScore.getGameScore().getAdvantagePlayer().toString() == 'PLAYER2'}">
+                        <h2>${requestScope.match.getPlayer2().getName()} have advantage</h2>
                     </c:if>
                 </c:if>
 
